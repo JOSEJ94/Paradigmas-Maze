@@ -1,0 +1,15 @@
+{
+  "name": "maze",
+  "version": "1.0.0",
+  "description": "Proyecto de Paradigmas",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jose Rojas, Alejandro Vega, Andrés Hernández, Javier Zamora",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mongoose": "^4.5.8"
+  }
+}
