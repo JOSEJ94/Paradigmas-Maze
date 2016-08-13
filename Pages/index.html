@@ -14,10 +14,12 @@
     ajax.send();
    }
    
-      function postSave() {
+     function postSave() {
     let ajax = new XMLHttpRequest();
     let url = "/guardar/jose";
     ajax.open("POST", url, true);
+	ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	ajax.send(JSON.parse('Jose'));
     ajax.onreadystatechange = () => {
      if (ajax.readyState === 4 && ajax.status === 200)
       document.getElementById('msg').innerHTML = ajax.responseText;
