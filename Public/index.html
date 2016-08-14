@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title>Test</title>
+  <script src="jquery.min.js" type="text/javascript"></script>
+  <script>	function getGen() {
+    let ajax = new XMLHttpRequest();
+    let url = "/generar";
+    ajax.open("GET", url, true);
+    ajax.onreadystatechange = () => {
+     if (ajax.readyState === 4 && ajax.status === 200)
+      document.getElementById('msg').innerHTML = ajax.responseText;
+    };
+    ajax.send();
+   }
+   
+   
+     function postSave() {
+    let ajax = new XMLHttpRequest();
+	let name = document.getElementById('name').value;
+    let url = "/guardar/"+name;
+    ajax.open("POST", url, true);
+    ajax.onreadystatechange = () => {
+     if (ajax.readyState === 4 && ajax.status === 200)
+      document.getElementById('msg').innerHTML = ajax.responseText;
+    };
+    ajax.send();
+   }
+   
+      function getLoad() {
+    let ajax = new XMLHttpRequest();
+	let name = document.getElementById('name').value;
+    let url = "/cargar/"+name;
+    ajax.open("GET", url, true);
+    ajax.onreadystatechange = () => {
+     if (ajax.readyState === 4 && ajax.status === 200)
+      document.getElementById('msg').innerHTML = ajax.responseText;
+    };
+    ajax.send();
+   }</script>
+  <script src="test.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <h1>Pagina index</h1>
+  <button id="gen" onclick="getGen();">Generar!</button>
+  <button id="guardar" onclick="postSave();">Guardar!</button>
+  <button id="cargar" onclick="getLoad();">Cargar!</button>
+  <input id="name" type="text"></input>
+  <div id='msg'><div>
+ </body>
+</html>

@@ -27,12 +27,14 @@ router.route('/')    //cargar pagina
 
 	.get(function(req, res) {
 		res.writeHead(200,{'Content-type':'text/html'});
-		fs.readFile('Pages/index.html',null,function(error,data){
+		fs.readFile('Public/index.html',null,function(error,data){
 		if(error){
 			res.writeHead(404);
 			res.write("<h1>Err 404: Pagina no encontrada</h1>");
 		}else
 			res.write(data);
+		//fs.readFile('Pages/index.html',null,(error,data)=>{(error)?res.write("<h1>Err 404: Pagina no encontrada</h1>"):res.write(data);});
+		
 		res.end();
 		});
 	})
@@ -49,12 +51,12 @@ router.route('/:action')    //generar el laberinto
 	})
 ;
 
-router.route('/:action/:name') //cargar
+router.route('/:action/:name') 
 
-	.get(function(req, res) {
+	.get(function(req, res) {//cargar
 		console.log(req.params.action);
 		if(req.params.action=='cargar')
-			res.json({ 'nombre':'Partida guardada', 'maze':'JSON'});
+			res.json(req.params.name);
 		res.end();
 	})
 	
@@ -62,7 +64,7 @@ router.route('/:action/:name') //cargar
 		console.log(req.params.action);
 		res.writeHead(200);
 		if(req.params.action=='guardar'){
-			res.write("<h1>Guardado papu!</h1>");
+			res.write("<h1>Guardado papu "+req.params.name+"!</h1>");
 		}
 		res.end();
 	})
