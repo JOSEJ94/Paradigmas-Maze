@@ -6,4 +6,4 @@ let savedGameSchema   = new Schema({
 	maze: String
 });
 
-module.exports = mongoose.model('savedGame', savedGameSchema);
+module.exports = mongoose.model('SavedGame', savedGameSchema);

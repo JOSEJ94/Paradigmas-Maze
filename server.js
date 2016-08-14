@@ -9,6 +9,7 @@ const dbAddress='localhost';
 
 //conectarse a BD
 mongoose.connect('mongodb://'+dbAddress+'/maze');
+module.exports = mongoose;
 
 //modelo de partida guardada en Base de datos
 let SavedGame = require('./models/savedGame');
@@ -57,6 +58,15 @@ router.route('/:action/:name')
 		console.log(req.params.action);
 		if(req.params.action=='cargar')
 			res.json(req.params.name);
+			SavedGame.find({name:req.params.name},function(err, results) {
+			if (err)
+				console.log('No good');
+			else{
+				console.log(results);
+				//res.send(results); //error
+				//res.json(results);
+			}
+		});
 		res.end();
 	})
 	
@@ -64,8 +74,17 @@ router.route('/:action/:name')
 		console.log(req.params.action);
 		res.writeHead(200);
 		if(req.params.action=='guardar'){
+			let newSavedGame = new SavedGame();
+			newSavedGame.name = req.params.name;
+			newSavedGame.maze = 'JSON';
+			newSavedGame.save(function(err) {
+			if (err)
+				console.log('Post ' + err);  
+			else
+				console.log('Guardado'); 
+			});
 			res.write("<h1>Guardado papu "+req.params.name+"!</h1>");
-		}
+			}
 		res.end();
 	})
 ;
