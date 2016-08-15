@@ -2,7 +2,7 @@ let mongoose     = require('mongoose');
 let Schema       = mongoose.Schema;
 
 let savedGameSchema   = new Schema({
-	name: String,
+	_id: String,
 	maze: String
 });
 
