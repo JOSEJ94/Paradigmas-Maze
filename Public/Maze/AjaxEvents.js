@@ -1,50 +1,49 @@
-    //cosas probadas y que no funcionan del todo
-    /*$(document).ready(function(){
-    	    $("#gen").click(function(){
-    	    // Request de Ajax (es una promesa) estilo callback
-    	    $.ajax({url: '/generar', 
-    			   type:'GET',
-    			   dataType:'json'
+//conexiones ajax
+function getGen() {
+    fetch("/generar", {
+            method: "GET"
+        }) //hace peticion por ajax, pide generar laberinto al server
+        .then((response) => {
+            return (response.status === 200) ? response.json() : "Not 200";
+        }) //revisa la respuesta del servidor para ver si es correcta
+        .then(obj => {
+            document.getElementById("msg").innerHTML = JSON.stringify(obj);
+        }) //asigna el div asociado con el resultado de la solicitud (para debugging)
+        .catch(function error(err) {
+            document.getElementById("msg").innerHTML = 'Connection Lost';
+            inicio();
+        }); //situacion en caso de no conexion
+}
 
-    			 }).done(function(result){
-    					alert(result);
-    			         //$("#msg").innerHTML = '<H3>FUNCIONA</H3>';
-    					})
-    			  .fail(function(e){alert(e);});
-    		}); 
-        });*/
-    function getGen() {
-        let ajax = new XMLHttpRequest();
-        let url = "/generar";
-        ajax.open("GET", url, true);
-        ajax.onreadystatechange = () => {
-            if (ajax.readyState === 4 && ajax.status === 200)
-                document.getElementById('msg').innerHTML = ajax.responseText;
-        };
-        ajax.send();
-    }
+function postSave() { //hace peticion de guardado de una partida  del laberinto 
+    let name = document.getElementById('name').value; //obtiene nombre de la partida
+    fetch("/guardar/" + name, {
+            method: "POST"
+        }) //inicia solicitud de guardado
+        .then((response) => {
+            return (response.status === 200) ? response.text() : "error";
+        }) //analiza respuesta del servidor
+        .then(obj => {
+            document.getElementById("msg").innerHTML = obj;
+        }) //muestra el resultado en el browser
+        .catch(function error(err) {
+            localStorage[name] = 'JSON';
+            document.getElementById("msg").innerHTML = 'Connection Lost';
+        }); //caso sin conexion guarda en localstorage
+}
 
-
-    function postSave() {
-        let ajax = new XMLHttpRequest();
-        let name = document.getElementById('name').value;
-        let url = "/guardar/" + name;
-        ajax.open("POST", url, true);
-        ajax.onreadystatechange = () => {
-            if (ajax.readyState === 4 && ajax.status === 200)
-                document.getElementById('msg').innerHTML = ajax.responseText;
-        };
-        ajax.send();
-    }
-
-    function getLoad() {
-        let ajax = new XMLHttpRequest();
-        let name = document.getElementById('name').value;
-        let url = "/cargar/" + name;
-        ajax.open("GET", url, true);
-        ajax.onreadystatechange = () => {
-            if (ajax.readyState === 4 && ajax.status === 200)
-                document.getElementById('msg').innerHTML = ajax.responseText;
-        };
-        ajax.send();
-    }
+function getLoad() {
+    let name = document.getElementById('name').value;
+    fetch("/cargar/" + name, {
+            method: "GET"
+        })
+        .then((response) => {
+            return (response.status === 200) ? response.json() : "Not 200";
+        })
+        .then(obj => {
+            document.getElementById("msg").innerHTML = JSON.stringify(obj);
+        })
+        .catch(function error(err) {
+            document.getElementById("msg").innerHTML = 'Modelo: ' + localStorage[name] + ' Connection Lost';
+        }); //caso sin conexion carga desde localstorage
+}

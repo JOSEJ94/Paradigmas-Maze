@@ -63,13 +63,13 @@ Nodo.prototype={
 				break;
 		}
 		ctx.lineWidth = 2;
-		ctx.strokeStyle = 'white';
+		ctx.strokeStyle = 'yellow';
 		ctx.stroke();
 	},
 	draw:function(ctx,gr,co){//Derecha, abajo, largo, alto, grosor y color.
 		ctx.beginPath();
 		ctx.lineWidth = gr;
-		ctx.strokeStyle = "black";
+		ctx.strokeStyle = "red";
 		ctx.rect(this.ejeX, this.ejeY, this.tamanyo, this.tamanyo);
 		ctx.fillStyle = co;
 		ctx.fill();

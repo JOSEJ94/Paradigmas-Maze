@@ -1,8 +1,8 @@
 //==================================================
 //Método genera matriz.
 //==================================================
-function generaMatriz(ctx,dim,tam,esp){
-	var grosor = "1"; var color = "white";
+function generaMatriz(ctx,dim,tam,esp){//Falta quitarle los estados -= y +=
+	var grosor = "1"; var color = "yellow";
 	var x = esp; var y = esp; var primero = new Nodo(tam, x, y);
 	
 	function CC(raiz, newO, newS, i, j, n){//Caso continuo (Genera las filas).

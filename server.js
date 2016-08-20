@@ -68,6 +68,7 @@ router.route('/cargar/:name')
     });
 });
 
+
 router.route('/guardar/:name')
     .post(function(req, res) { //guardar
         console.log(req.params.action);
@@ -88,7 +89,6 @@ router.route('/guardar/:name')
 server.use('/', router);
 //Para cargar las imagenes y assets del cliente...
 server.use(express.static("Public"));
-
 console.log('Server iniciado en ' + serverPort);
 console.log('Base de datos disponible en mongodb://' + dbAddress + '/maze');
 server.listen(serverPort);
