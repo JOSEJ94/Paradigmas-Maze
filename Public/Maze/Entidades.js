@@ -1,5 +1,5 @@
 //==================================================
-//Objeto Nodo.
+//===================Objeto Nodo.===================
 //==================================================
 function Nodo(t,x,y){
 	this.Nodo(t,x,y);
@@ -41,39 +41,8 @@ Nodo.prototype={
 			case 4: return this.oeste;
 		}
 	},
-	conect:function(ctx,num){
+	connect:function(num){
 		this.conexiones.push(num);
-		ctx.beginPath();
-		switch(num){
-			case 1:			
-				ctx.moveTo(this.ejeX,this.ejeY);
-				ctx.lineTo(this.ejeX+this.tamanyo,this.ejeY);
-				break;
-			case 2:
-				ctx.moveTo(this.ejeX+this.tamanyo,this.ejeY);
-				ctx.lineTo(this.ejeX+this.tamanyo,this.ejeY+this.tamanyo);
-				break;
-			case 3:
-				ctx.moveTo(this.ejeX,this.ejeY+this.tamanyo);
-				ctx.lineTo(this.ejeX+this.tamanyo,this.ejeY+this.tamanyo);
-				break;
-			case 4:
-				ctx.moveTo(this.ejeX,this.ejeY);
-				ctx.lineTo(this.ejeX,this.ejeY+this.tamanyo);
-				break;
-		}
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = 'yellow';
-		ctx.stroke();
-	},
-	draw:function(ctx,gr,co){//Derecha, abajo, largo, alto, grosor y color.
-		ctx.beginPath();
-		ctx.lineWidth = gr;
-		ctx.strokeStyle = "red";
-		ctx.rect(this.ejeX, this.ejeY, this.tamanyo, this.tamanyo);
-		ctx.fillStyle = co;
-		ctx.fill();
-		ctx.stroke();
 	}
 };
 Nodo.from= function(plain){

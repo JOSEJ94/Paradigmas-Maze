@@ -2,6 +2,7 @@
 let express = require('express');
 let fs = require("fs");
 let mongoose = require('mongoose');
+var bodyParser = require('body-parser');
 
 const serverPort = 8081;
 const dbAddress = 'localhost';
@@ -17,6 +18,9 @@ let SavedGame = require('./models/savedGame');
 let server = express();
 //crear Router
 let router = express.Router();
+
+server.use(bodyParser.urlencoded({ extended: false }))
+server.use(bodyParser.json());
 
 //siempre ocurre con cada request
 /*
@@ -69,23 +73,26 @@ router.route('/cargar/:name')
 });
 
 
-router.route('/guardar/:name')
+router.route('/guardar/:name/:maze')
     .post(function(req, res) { //guardar
         console.log(req.params.action);
+		console.log(req.body);
+		/*
         let newSavedGame = new SavedGame();
         newSavedGame._id = req.params.name;
-        newSavedGame.maze = 'JSON';
+        newSavedGame.maze = req.params.maze;
         newSavedGame.save(function(err) {
             if (err)
                 console.log('Post ' + err);
             else
                 console.log('Guardado');
-        });
-        res.write("<h1>Guardado papu " + req.params.name + "!</h1>");
+        });*/
+        res.write("<h1>Guardado papu " + req.params.name + " con data "+req.body.data+"!</h1>");
         res.end();
     });
 
 // Registro de rutas
+
 server.use('/', router);
 //Para cargar las imagenes y assets del cliente...
 server.use(express.static("Public"));
