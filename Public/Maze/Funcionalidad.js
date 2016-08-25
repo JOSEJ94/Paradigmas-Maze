@@ -5,23 +5,6 @@ var tamanoCelda;
 var matriz;
 var actual;
 
-window.onload = function(){
-	canvas = document.getElementById("Panel");
-	ctx = canvas.getContext("2d");
-	tamanoCelda = 50;
-}
-
-function letsDoIt(){
-	//Consigo los datos necesarios.
-	const dim = parseInt(document.getElementById("Dimension").value);
-	const esp = tamanoCelda*dim;	
-	
-	//Edito las variables necesarias con los valores adecuados.
-	canvas.height=esp; canvas.width=esp;
-	matriz=start(dim, tamanoCelda, esp-tamanoCelda);
-	//actual=matriz.control;
-
-	//
 	//Preparo los listeners.
 	const nombreEvento = "Maze2Draw";	
 	const dibujaLab = function(){
@@ -33,8 +16,33 @@ function letsDoIt(){
 	};
 	const evento = new CustomEvent(nombreEvento, dibujaLab);
 	document.addEventListener(nombreEvento, e=>dibujaLab());
-	
+
+window.onload = function(){
+	canvas = document.getElementById("Panel");
+	ctx = canvas.getContext("2d");
+	tamanoCelda = 50;
+}
+
+function letsDoIt(){
+	//Consigo los datos necesarios.
+	const dim = parseInt(document.getElementById("Dimension").value);
+	const esp = tamanoCelda*dim;	
+	//Edito las variables necesarias con los valores adecuados.
+	canvas.height=esp; canvas.width=esp;
+	matriz=start(dim, tamanoCelda, esp-tamanoCelda);
+	actual=matriz.control;
 	//Activa el listener que dibuja el laberinto y los listeners de control.
+	document.dispatchEvent(evento);
+	window.addEventListener('keydown',controlCases);
+}
+
+function updateView(MatrizJson)
+{  
+	matriz = JsonToMaze(MatrizJson);
+	const dim = JSON.parse(MatrizJson)[0];
+	const esp = tamanoCelda*dim;
+	canvas.height=esp; canvas.width=esp;
+	actual=matriz.control;
 	document.dispatchEvent(evento);
 	window.addEventListener('keydown',controlCases);
 }

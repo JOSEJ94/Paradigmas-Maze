@@ -59,35 +59,33 @@ router.route('/generar') //generar el laberinto
 router.route('/cargar/:name')
 
 .get(function(req, res) { //cargar
-    console.log('cargar');
+    console.log('Cargar '+req.param.name);
     SavedGame.findById({
         _id: req.params.name
     }, function(err, results) {
         if (err)
-            console.log('No good');
+            console.log('Not Found');
         else {
-            console.log(results.maze);
+            console.log('Found');
             res.json(results.maze);
         }
     });
 });
 
 
-router.route('/guardar/:name/:maze')
+router.route('/guardar/:name')
     .post(function(req, res) { //guardar
-        console.log(req.params.action);
-		console.log(req.body);
-		/*
+        console.log(req.params.name);
         let newSavedGame = new SavedGame();
         newSavedGame._id = req.params.name;
-        newSavedGame.maze = req.params.maze;
+        newSavedGame.maze = JSON.stringify(req.body);
         newSavedGame.save(function(err) {
             if (err)
                 console.log('Post ' + err);
             else
                 console.log('Guardado');
-        });*/
-        res.write("<h1>Guardado papu " + req.params.name + " con data "+req.body.data+"!</h1>");
+        });
+        res.write("<h1>Guardado papu " + req.params.name +"!</h1>");
         res.end();
     });
 

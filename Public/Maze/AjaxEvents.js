@@ -19,13 +19,14 @@ function getGen() {
 
 function postSave() { //hace peticion de guardado de una partida  del laberinto 
     let name = document.getElementById('name').value; //obtiene nombre de la partida
-	console.log("/guardar/" + name+'/'+JSON.stringify(mazeToJson(matriz)));
-    fetch("/guardar/" + name+'/'+JSON.stringify(mazeToJson(matriz)), {
+	//console.log("/guardar/" + name+'/'+JSON.stringify(mazeToJson(matriz)));
+    fetch("/guardar/" + name, {
 			headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json'
 			},
-            method: "POST"
+            method: "POST",
+			body: mazeToJson(matriz)
         }) //inicia solicitud de guardado
         .then((response) => {
             return (response.status === 200) ? response.text() : "error";
@@ -49,7 +50,8 @@ function getLoad() {
             return (response.status === 200) ? response.json() : "Not 200";
         })
         .then(obj => {
-            document.getElementById("msg").innerHTML = JSON.stringify(obj);
+            document.getElementById("msg").innerHTML ='Cargado desde Server '/*obj*/;
+			updateView(obj);		
         })
         .catch(function error(err) {
             document.getElementById("msg").innerHTML = 'Modelo: ' + localStorage[name] + ' Connection Lost';
