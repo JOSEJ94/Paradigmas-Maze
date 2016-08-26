@@ -1,13 +1,4 @@
-﻿function save(id, matriz){//Guarda en el sessionStorage una matriz (Con el laberinto adentro).
-	return sessionStorage.setItem(id, JSON.stringify(matriz, replacer));
-}
-
-function load(id){//Recupera una matriz del sessionStorage (Con la matriz dentro).
-	var matriz = sessionStorage.getItem(id);
-	if(matriz === null) return new Matriz(0);
-	else return JSON.parse(matriz, revive);
-}
-
+﻿
 function revive(k,v){//Define el tipo de objeto que se recupera.
 	if (v instanceof Object && v._class == 'Matriz')
 		return Matriz.from(v);
@@ -70,15 +61,3 @@ function JsonToMaze(code){//Convierte un string de JSON a una matriz (Con el lab
 	matriz.control=toMatriz(simplificar([], fromJSON, fromJSON[1], fromJSON[1], 2, dim), 0, dim)
 	return matriz;
 }
-
-
-/*
-0 nnnnnnnnnnnnnnnn
-
-0 nnnn nnnn nnnn nnnn
-
-nnnn
-nnnn
-nnnn
-nnnn
-*/

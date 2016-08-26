@@ -1,55 +1,79 @@
 //==================================================
 //===============Método genera matriz===============
 //==================================================
-function generaMatriz(dim,tam,esp){//Retorna el nodo superior izquierdo de la matriz.
-	var primero = new Nodo(tam, esp, esp);//Último nodo.
-	function CC(raiz, newO, newS, i, j, n,x,y){//Caso continuo (Genera las filas).
+//Retorna el nodo superior izquierdo de la matriz.
+function generaMatriz(dim,tam,esp){
+	var primero = new Nodo(tam, esp, esp);
+	
+	//Crea las filas.
+	function buildRow(raiz, newO, newS, i, j, n,x,y){
 		var node = new Nodo(tam, x+tam, y);
-		node.oeste=newO; newO.este=node; node.sur=newS; newS.norte=node;
-		return (j+1<n) ? CM(raiz,node,newS.este,i,j+1,n,x+tam,y) :
-			(i+1<n) ? CM(raiz,null,raiz.este,i+1,0,n,x+tam,y) : raiz;
+		node.oeste=newO;
+		newO.este=node;
+		node.sur=newS;
+		newS.norte=node;
+		return (j+1<n) ? buildStructure(raiz,node,newS.este,i,j+1,n,x+tam,y) :
+			(i+1<n) ? buildStructure(raiz,null,raiz.este,i+1,0,n,x+tam,y) : raiz;
 	}
-	function CL(raiz,newS,i,j,n,x,y){//Caso lateral (Inicia las columnas que son la base de las filas).
-		var aux = new Nodo(tam,0,y-tam); var node = new Nodo(tam,tam,y-tam);
-		raiz.norte=aux; aux.sur=raiz; node.oeste=aux; aux.este=node; node.sur=newS; newS.norte=node;
-		return (j+2<n) ? CM (aux, node, newS.este, i, j+2, n,tam,y-tam) :
-			(i+1<n) ? CM(aux, null, aux.este, i+1, 0, n,tam,y-tam) : aux;
+	
+	//Inicia las columnas (Base de las filas).
+	function buildColumn(raiz,newS,i,j,n,x,y){
+		var aux = new Nodo(tam,0,y-tam);
+		var node = new Nodo(tam,tam,y-tam);
+		raiz.norte=aux;
+		aux.sur=raiz;
+		node.oeste=aux;
+		aux.este=node;
+		node.sur=newS;
+		newS.norte=node;
+		return (j+2<n) ? buildStructure (aux, node, newS.este, i, j+2, n,tam,y-tam) :
+			(i+1<n) ? buildStructure(aux, null, aux.este, i+1, 0, n,tam,y-tam) : aux;
 	}
-	function CI(raiz,i,j,n,x,y){//Caso inicial (Crea la primera fila que es la base de todo).
+	
+	//Crea la primera fila (Base de todo).
+	function firstRow(raiz,i,j,n,x,y){//Crea la primera fila que es la base de todo.
 		var node = new Nodo(tam, x-tam, y);
-		node.este=raiz; raiz.oeste=node;
-		return (j+1<n) ? CM(node, null, null, i, j+1, n,x-tam,y) :
-			(i+1<n) ? CM(node, null, node.este, i+1, 0, n,x-tam,y) : node;
+		node.este=raiz;
+		raiz.oeste=node;
+		return (j+1<n) ? buildStructure(node, null, null, i, j+1, n,x-tam,y) :
+			(i+1<n) ? buildStructure(node, null, node.este, i+1, 0, n,x-tam,y) : node;
 	}
-	function CM(raiz,newO,newS,i,j,n,x,y){//Método que define qué sigue.
-		return (newO) ? CC(raiz,newO,newS,i,j,n,x,y) :
-			(newS) ? CL(raiz,newS,i,j,n,x,y):CI(raiz,i,j,n,x,y);
+	//Método que define qué sigue.
+	function buildStructure(raiz,newO,newS,i,j,n,x,y){
+		return (newO) ? buildRow(raiz, newO, newS, i, j, n, x, y) :
+			(newS) ? buildColumn(raiz, newS, i, j, n, x, y) : firstRow(raiz, i, j, n, x, y);
 	}
-	return CM(primero,null,null,0,1,dim,esp,esp);
+	return buildStructure(primero,null,null,0,1,dim,esp,esp);
 }
 
 //==================================================
 //=============Método genera laberinto.=============
 //==================================================
-function creaLaberinto(tabla){//Falta bloquear caminos.
-	function getRandom(min, max){
-		return Math.floor((Math.random() * max) + min);
+//Retorna el nodo inicial del laberinto.
+function creaLaberinto(tabla){
+	let getRandom = (min, max) => Math.floor((Math.random() * max) + min);
+	let opuesto = n => (n<3) ? (n+2) : (n-2);
+	let getEnd = (oldN, newN, oldMax, newMax) => (!oldN) ? [newN, newMax] : (oldMax < newMax) ? [newN, newMax] : [oldN, oldMax];
+
+	function deadEnd(node,pila,nodeF,numM){//Hace backtracking.
+		var finalNode = getEnd(nodeF, node, numM, pila.length);
+		var newNodoF = finalNode[0];
+		var newNumMax = finalNode[1];
+		(nodeF)?nodeF.nodoFinal=false:true;
+		newNodoF.nodoFinal=true;
+		return (pila.length==0)?node:findPath(node.go(opuesto(pila.pop())), pila, newNodoF, newNumMax);
 	}
-	function opuesto(n){
-		return (n<3)?(n+2):(n-2);
+	function alleyClear(opc,node,pila,nodeF,numM){//Callejón despejado -> Avanza en el grafo.
+		var num=getRandom(0,opc.length);
+		pila.push(opc[num]);
+		node.connect(opc[num]);
+		node.go(opc[num]).connect(opuesto(opc[num]));
+		return findPath(node.go(opc[num]), pila, nodeF, numM);
 	}
-	function CS(node, pila){//Callejón sin salida -> Hace backtracking.
-		return (pila.length==0)?node:EC(node.go(opuesto(pila.pop())), pila);
-	}
-	function CD(opc, node, pila){//Callejón despejado -> Avanza en el grafo.
-		var num=getRandom(0,opc.length); pila.push(opc[num]);
-		node.connect(opc[num]); node.go(opc[num]).connect(opuesto(opc[num]));
-		return EC(node.go(opc[num]), pila);
-	}
-	function EC(node, pila){//Define un camino según las opciones que posee el nodo.
+	function findPath(node,pila,nodeF,numM){//Define un camino según las opciones que posee el nodo.
 		node.visitado=false;
 		var opc = node.where();
-		return (opc.length==0)?CS(node,pila):CD(opc,node,pila);
+		return (opc.length==0)?deadEnd(node,pila,nodeF,numM):alleyClear(opc,node,pila,nodeF,numM);
 	}
-	return EC(tabla.control,[]);
+	return findPath(tabla.control,[],null,0);
 }
