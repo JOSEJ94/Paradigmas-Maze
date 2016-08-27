@@ -2,7 +2,10 @@
 let express = require('express');
 let fs = require("fs");
 let mongoose = require('mongoose');
-var bodyParser = require('body-parser');
+let bodyParser = require('body-parser');
+
+let generator = require('./server/Generador.js');
+let converter = require('./server/Converter.js');
 
 const serverPort = 8081;
 const dbAddress = 'localhost';
@@ -22,75 +25,49 @@ let router = express.Router();
 server.use(bodyParser.urlencoded({ extended: false }))
 server.use(bodyParser.json());
 
-//siempre ocurre con cada request
-/*
-router.use(function(req, res, next) {
-	next();
-});
-*/
-
 router.route('/') //cargar pagina
-
 .get(function(req, res) {
     //
     res.writeHead(200);
-    fs.readFile('Public/index.html', null, function(error, data) {
-        if (error) {
-            res.write("<h1>Err 404: Pagina no encontrada</h1>");
-        } else {
-            res.write(data);
-        }
-        //fs.readFile('Pages/index.html',null,(error,data)=>{(error)?res.write("<h1>Err 404: Pagina no encontrada</h1>"):res.write(data);});		
+    fs.readFile('Public/index.html', null, (error, data)=> {
+        (error)?res.write("<h1>Err 404: Pagina no encontrada</h1>"):res.write(data);
         res.end();
     });
 });
 
-router.route('/generar') //generar el laberinto
-
-.get(function(req, res) {
-    console.log('generar');
-    res.json({
-        'nombre': 'Partida guardada',
-        'maze': 'JSON'
-    });
-    res.end();
+router.route('/generar/:dim') //generar el laberinto
+.get((req, res)=>{
+    console.log('Generar laberinto de '+req.params.dim+'x'+req.params.dim);
+	res.json(converter.mazeToJson(generator.generate(req.params.dim)));
 });
 
-router.route('/cargar/:name')
-
-.get(function(req, res) { //cargar
-    console.log('Cargar '+req.param.name);
+router.route('/cargar/:name')//cargar
+.get((req, res)=> { 
+    console.log('Cargar laberinto con nombre: '+req.param.name);
     SavedGame.findById({
         _id: req.params.name
-    }, function(err, results) {
+    }, (err, results)=>{
         if (err)
-            console.log('Not Found');
+            console.log('Partida no encontrada');
         else {
-            console.log('Found');
+            console.log('Encontrada la partida y enviada al solicitante');
             res.json(results.maze);
         }
     });
 });
 
-
-router.route('/guardar/:name')
-    .post(function(req, res) { //guardar
-        console.log(req.params.name);
+router.route('/guardar/:name')//guardar
+    .post((req, res)=> { 
+        console.log('Guardar laberinto con nombre: '+req.params.name);
         let newSavedGame = new SavedGame();
         newSavedGame._id = req.params.name;
         newSavedGame.maze = JSON.stringify(req.body);
-        newSavedGame.save(function(err) {
-            if (err)
-                console.log('Post ' + err);
-            else
-                console.log('Guardado');
-        });
-        res.write("<h1>Guardado papu " + req.params.name +"!</h1>");
+        newSavedGame.save((err)=>err?console.log('Post ' + err):console.log('Guardado con nombre: '+req.params.name));
+        res.write("<h1>Laberinto " + req.params.name +" guardado exitosamente!</h1>");
         res.end();
     });
 
 // Registro de rutas
-
 server.use('/', router);
 //Para cargar las imagenes y assets del cliente...
 server.use(express.static("Public"));
