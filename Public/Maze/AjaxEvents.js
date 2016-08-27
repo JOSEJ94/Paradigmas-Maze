@@ -8,10 +8,11 @@ function getGen() {
            return (response.status === 200) ? response.json() : "Not 200";
         }) //revisa la respuesta del servidor para ver si es correcta
         .then(obj => {
-			updateView(obj);		
+			updateView(obj);	
+			document.getElementById("msg").innerHTML +='Generado desde Server <br>';				
         }) //asigna el div asociado con el resultado de la solicitud (para debugging)
-        .catch(function error(err) {
-            document.getElementById("msg").innerHTML = 'Connection Lost';
+        .catch(err =>{
+            document.getElementById("msg").innerHTML += 'No hay conexion con el servidor';
             letsDoIt();
         });//situacion en caso de no conexion
 }
@@ -26,11 +27,11 @@ function postSave() { //hace peticion de guardado de una partida  del laberinto
             method: "POST",
 			body: mazeToJson(matriz)
         }) //inicia solicitud de guardado
-        .then((response) => {
-            return (response.status === 200) ? response.text() : "error";
+        .then(response => {
+            return (response.status === 200) ? response.text() : 'No encontrado en server, procediendo a guardado local';
         }) //analiza respuesta del servidor
         .then(obj => {
-            document.getElementById("msg").innerHTML = obj;
+            document.getElementById("msg").innerHTML += obj+'<br>';
         }) //muestra el resultado en el browser
         .catch(function error(err) {
 			savingLocaly(name);
@@ -43,11 +44,11 @@ function getLoad() {
             method: "GET"
         })
         .then((response) => {
-             return (response.status === 200) ? response.json() : "Not 200";
+             return (response.status === 200) ? response.json() : 'No encontrado en server, procediendo a carga local<br>';
         })
         .then(obj => {
-            document.getElementById("msg").innerHTML ='Cargado desde Server '/*obj*/;
-			updateView(obj);		
+			updateView(obj);
+			document.getElementById("msg").innerHTML +='Cargado desde Server <br>';		
         })
         .catch((err)=> {
 			loadingLocaly(name);
@@ -57,13 +58,13 @@ function getLoad() {
 }
 
 function savingLocaly(name){ //en caso de no haber conexion al servidor
-	document.getElementById("msg").innerHTML = 'No hay conexion con el servidor...';
+	document.getElementById("msg").innerHTML += 'Intentando Guardar Localmente...<br>';
 	localStorage[name] = matriz;
-	(localStorage[name])?alert('Partida Guardada Localmente'):alert('Ha ocurrido un problema al guardar localmente');
+	(localStorage[name])?document.getElementById("msg").innerHTML +='Guardado localmente exitosamente<br>':document.getElementById("msg").innerHTML +='No se pudo guardar la partida localmente<br>';
 }
 
 function loadingLocaly(name){ // en caso de no haber conexion al servidor
-	document.getElementById("msg").innerHTML = 'No hay conexion con el servidor...';
+	document.getElementById("msg").innerHTML += 'Intentando Cargar Localmente...<br>';
 	matriz = localStorage[name];
-	(matriz)?alert('Partida Local cargada'):alert('Partida Local no encontrada/no existente');
+	(matriz)?document.getElementById("msg").innerHTML +='Cargado localmente <br>':document.getElementById("msg").innerHTML +='No se pudo cargar localmente <br>';
 }

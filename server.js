@@ -12,6 +12,8 @@ const dbAddress = 'localhost';
 
 //conectarse a BD
 mongoose.connect('mongodb://' + dbAddress + '/maze');
+//configurar promesas de Mongoose para que sean igual que las nativas
+mongoose.Promise = global.Promise;
 module.exports = mongoose;
 
 //modelo de partida guardada en Base de datos
@@ -43,28 +45,16 @@ router.route('/generar/:dim') //generar el laberinto
 
 router.route('/cargar/:name')//cargar
 .get((req, res)=> { 
-    console.log('Cargar laberinto con nombre: '+req.param.name);
-    SavedGame.findById({
-        _id: req.params.name
-    }, (err, results)=>{
-        if (err)
-            console.log('Partida no encontrada');
-        else {
-            console.log('Encontrada la partida y enviada al solicitante');
-            res.json(results.maze);
-        }
-    });
+    console.log('Cargar laberinto con nombre: '+req.params.name);
+	let query = SavedGame.findOne({_id: req.params.name});
+	query.exec().catch(err=>{console.log('error');res.sendStatus(400);}).then(result=>res.json(result.maze)).then(obj=>console.log('Encontrada la partida y enviada al solicitante'));
 });
 
 router.route('/guardar/:name')//guardar
     .post((req, res)=> { 
         console.log('Guardar laberinto con nombre: '+req.params.name);
-        let newSavedGame = new SavedGame();
-        newSavedGame._id = req.params.name;
-        newSavedGame.maze = JSON.stringify(req.body);
-        newSavedGame.save((err)=>err?console.log('Post ' + err):console.log('Guardado con nombre: '+req.params.name));
-        res.write("<h1>Laberinto " + req.params.name +" guardado exitosamente!</h1>");
-        res.end();
+		let insert = new SavedGame({_id : req.params.name, maze : JSON.stringify(req.body)});
+		insert.save().then(a=>{console.log('Guardado con nombre: '+req.params.name);res.write("Laberinto " + req.params.name +" guardado exitosamente!");res.end();}).catch(err=>{console.log('Post ' + err);res.end();});
     });
 
 // Registro de rutas

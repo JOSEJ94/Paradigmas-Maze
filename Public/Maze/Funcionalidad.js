@@ -13,6 +13,7 @@ var actual;
 		dibujaCelda(matriz.control, matriz.control, 1, 1, matriz.dimension);
 	};
 	const evento = new CustomEvent(nombreEvento, dibujaLab);
+	
 
 //Instrucciones por ejecutar al iniciar la página.
 window.onload = function(){
@@ -42,9 +43,18 @@ function letsDoIt(){
 	window.addEventListener('keydown',controlCases);
 }
 
-function updateView(MatrizJson) //enviar notificacion de actualizar la vista 
-{  
+//Método que inicializa un laberinto.
+function start(dim, tam_1, tam_2){
+	matriz = new Matriz(dim);
+	matriz.control = generaMatriz(dim, tam_1, tam_2);
+	matriz.control = creaLaberinto(matriz);	
+	return matriz;
+}
+
+//enviar notificacion de actualizar la vista 
+function updateView(MatrizJson) {  
 	matriz = JsonToMaze(MatrizJson);
+	matriz.control.visitado= true;
 	const dim = JSON.parse(MatrizJson)[0];
 	const esp = tamanoCelda*dim;
 	canvas.height=esp; canvas.width=esp;
@@ -52,14 +62,6 @@ function updateView(MatrizJson) //enviar notificacion de actualizar la vista
 	document.addEventListener(nombreEvento, e=>dibujaLab());
 	document.dispatchEvent(evento);
 	window.addEventListener('keydown',controlCases);
-}
-
-//Método que inicializa un laberinto.
-function start(dim, tam_1, tam_2){
-	matriz = new Matriz(dim);
-	matriz.control = generaMatriz(dim, tam_1, tam_2);
-	matriz.control = creaLaberinto(matriz);	
-	return matriz;
 }
 
 //Método que dibuja un nodo.
