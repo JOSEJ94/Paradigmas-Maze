@@ -1,7 +1,4 @@
-table {
-    border-collapse: collapse;
-    width: 100%;
-}
+
 
 td {
 	text-align: center;
@@ -16,8 +13,6 @@ h1{
 	color: red;
 	display: block;
     font-size: 50px;
-    margin-top: 0.67em;
-    margin-bottom: 0.67em;
     margin-left: 0;
     margin-right: 0;
     font-weight: bold;
@@ -26,3 +21,17 @@ h1{
 .Centrado{
 	text-align: center;
 }
+
+.control
+{
+	display: inline-block;
+	background-color: white;
+    border-style: ridge;
+    border-radius: 16px;
+    padding: 10px 10px 10px 10px;
+    text-align: center;
+    vertical-align: middle;
+    width: 300px;
+	height: 100px
+}
+

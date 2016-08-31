@@ -24,37 +24,54 @@ let server = express();
 //crear Router
 let router = express.Router();
 
-server.use(bodyParser.urlencoded({ extended: false }))
+server.use(bodyParser.urlencoded({
+    extended: false
+}))
 server.use(bodyParser.json());
 
 router.route('/') //cargar pagina
-.get(function(req, res) {
-    //
-    res.writeHead(200);
-    fs.readFile('Public/index.html', null, (error, data)=> {
-        (error)?res.write("<h1>Err 404: Pagina no encontrada</h1>"):res.write(data);
-        res.end();
+    .get((req, res) => {
+        //
+        res.writeHead(200);
+        fs.readFile('Public/index.html', null, (error, data) => {
+            (error) ? res.write("<h1>Err 404: Pagina no encontrada</h1>"): res.write(data);
+            res.end();
+        });
     });
-});
 
 router.route('/generar/:dim') //generar el laberinto
-.get((req, res)=>{
-    console.log('Generar laberinto de '+req.params.dim+'x'+req.params.dim);
-	res.json(converter.mazeToJson(generator.generate(req.params.dim)));
-});
+    .get((req, res) => {
+        console.log('Generar laberinto de ' + req.params.dim + 'x' + req.params.dim);
+        res.json(converter.mazeToJson(generator.generate(req.params.dim)));
+    });
 
-router.route('/cargar/:name')//cargar
-.get((req, res)=> { 
-    console.log('Cargar laberinto con nombre: '+req.params.name);
-	let query = SavedGame.findOne({_id: req.params.name});
-	query.exec().catch(err=>{console.log('error');res.sendStatus(400);}).then(result=>res.json(result.maze)).then(obj=>console.log('Encontrada la partida y enviada al solicitante'));
-});
+router.route('/cargar/:name') //cargar
+    .get((req, res) => {
+        console.log('Cargar laberinto con nombre: ' + req.params.name);
+        let query = SavedGame.findOne({
+            _id: req.params.name
+        });
+        query.exec().catch(err => {
+            console.log('error');
+            res.sendStatus(400);
+        }).then(result => res.json(result.maze)).then(obj => console.log('Encontrada la partida y enviada al solicitante'));
+    });
 
-router.route('/guardar/:name')//guardar
-    .post((req, res)=> { 
-        console.log('Guardar laberinto con nombre: '+req.params.name);
-		let insert = new SavedGame({_id : req.params.name, maze : JSON.stringify(req.body)});
-		insert.save().then(a=>{console.log('Guardado con nombre: '+req.params.name);res.write("Laberinto " + req.params.name +" guardado exitosamente!");res.end();}).catch(err=>{console.log('Post ' + err);res.end();});
+router.route('/guardar/:name') //guardar
+    .post((req, res) => {
+        console.log('Guardar laberinto con nombre: ' + req.params.name);
+        let insert = new SavedGame({
+            _id: req.params.name,
+            maze: JSON.stringify(req.body)
+        });
+        insert.save().then(a => {
+            console.log('Guardado con nombre: ' + req.params.name);
+            res.write("Laberinto " + req.params.name + " guardado exitosamente!");
+            res.end();
+        }).catch(err => {
+            console.log('Post ' + err);
+            res.end();
+        });
     });
 
 // Registro de rutas

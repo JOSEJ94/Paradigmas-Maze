@@ -1,160 +1,217 @@
-var canvas;
-var ctx;
-var tamanoCelda;
-var matriz;
-var actual;
+let canvas;
+let ctx;
+let tamC;
+let matriz;
+let actual;
+let trophyImage;
+let tigreImage;
 
-	const nombreEvento = "Maze2Draw";	
-	const dibujaLab = function(){
-		function dibujaCelda(raiz, node, i, j, n){
+let msg;
+let showMessage = () => document.getElementById('msg').innerHTML += new Date().toLocaleString() + ' ' + msg + '<br>';
+const mostrarMensaje = new CustomEvent("showMessage", showMessage);
+
+function setMessage(mensaje) {
+    msg = mensaje;
+    document.dispatchEvent(mostrarMensaje);
+}
+
+//Instrucciones por ejecutar al iniciar la página.
+window.onload = () => {
+    document.addEventListener("showMessage", e => showMessage());
+	document.getElementById("Solucion").disabled = true;
+    canvas = document.getElementById("Panel");
+    ctx = canvas.getContext("2d");
+    tamC = 50;
+}
+
+//Método que inicializa una partida.
+function letsDoIt() {
+    //Consigo los datos necesarios.
+    const dim = parseInt(document.getElementById("Dimension").value);
+    const esp = tamC * dim;
+
+    //Edito las letiables necesarias con los valores adecuados.
+    canvas.height = esp;
+    canvas.width = esp;
+	
+	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => errorMessage("Error al generar laberinto."));
+	toDo.then(prepareImages()).then(startListener()).then(activeListeners());
+	
+    /*matriz = startMaze(dim, tamC, esp - tamC);
+    matriz.control.visitado = true;
+    actual = matriz.control;*/
+}
+function errorMessage(mjs){
+	alert(mjs);
+	console.log(mjs);
+}
+
+function prepareImages(){//Borrar?
+	trophyImage = new Image();
+	tigreImage = new Image();
+	trophyImage.src = '../img/Trophy.png';
+	tigreImage.src = '../img/Tiger.png';
+}
+
+//Método que inicializa un laberinto.
+function startMaze(dim, tam_1, tam_2) {
+    matriz = creaLaberinto(generaMatriz(dim, tam_1, tam_2));
+	actual = matriz.control;
+	actual.visitado=true;
+}
+
+function startListener() {
+	const nombreEvento = "Maze2Draw";
+	const dibujaLab = () => {
+		function dibujaCelda(raiz, node, i, j, n) {
 			drawNode(node);
-			(j<n)?dibujaCelda(raiz, node.este, i, j+1, n):(i<n)?dibujaCelda(raiz.sur, raiz.sur, i+1, 1, n):true;
+			(j < n) ? dibujaCelda(raiz, node.este, i, j + 1, n): (i < n) ? dibujaCelda(raiz.sur, raiz.sur, i + 1, 1, n) : true;
 		}
 		dibujaCelda(matriz.control, matriz.control, 1, 1, matriz.dimension);
 	};
 	const evento = new CustomEvent(nombreEvento, dibujaLab);
-	
-
-//Instrucciones por ejecutar al iniciar la página.
-window.onload = function(){
-	canvas = document.getElementById("Panel");
-	ctx = canvas.getContext("2d");
-	tamanoCelda = 50;
+	document.addEventListener(nombreEvento, e => dibujaLab());
+    document.dispatchEvent(evento);
 }
 
-//Método que inicializa una partida.
-function letsDoIt(){
-	//Consigo los datos necesarios.
-	const dim = parseInt(document.getElementById("Dimension").value);
-	const esp = tamanoCelda*dim;
-	
-	//Edito las variables necesarias con los valores adecuados.
-	canvas.height=esp; canvas.width=esp;
-	matriz=start(dim, tamanoCelda, esp-tamanoCelda);
-	
-	matriz.control.visitado=true;
-	actual=matriz.control;
-	
-	//Preparo los listeners.
-	document.addEventListener(nombreEvento, e=>dibujaLab());
-	
-	//Activa el listener que dibuja el laberinto y los listeners de control.
-	document.dispatchEvent(evento);
-	window.addEventListener('keydown',controlCases);
-}
-
-//Método que inicializa un laberinto.
-function start(dim, tam_1, tam_2){
-	matriz = new Matriz(dim);
-	matriz.control = generaMatriz(dim, tam_1, tam_2);
-	matriz.control = creaLaberinto(matriz);	
-	return matriz;
+function activeListeners() {
+	window.addEventListener('keydown', controlCases);
+	document.getElementById("Solucion").disabled = false;
+	document.getElementById("Solucion").addEventListener('click',autoControl);
 }
 
 //enviar notificacion de actualizar la vista 
-function updateView(MatrizJson) {  
-	matriz = JsonToMaze(MatrizJson);
-	matriz.control.visitado= true;
-	const dim = JSON.parse(MatrizJson)[0];
-	const esp = tamanoCelda*dim;
-	canvas.height=esp; canvas.width=esp;
-	actual=matriz.control;
-	document.addEventListener(nombreEvento, e=>dibujaLab());
-	document.dispatchEvent(evento);
-	window.addEventListener('keydown',controlCases);
+function updateView(MatrizJson) {
+	
+	let toDo = new Promise(() =>
+	{
+    matriz = JsonToMaze(MatrizJson);
+    matriz.control.visitado = true;
+    const dim = JSON.parse(MatrizJson)[0];
+    const esp = tamC * dim;
+    canvas.height = esp;
+    canvas.width = esp;
+    actual = matriz.control;
+	}
+	, () => setMessage("Error al generar laberinto."));
+	toDo.then(prepareImages()).then(startListener()).then(activeListeners());
+	
+	/*
+    matriz = JsonToMaze(MatrizJson);
+    matriz.control.visitado = true;
+    const dim = JSON.parse(MatrizJson)[0];
+    const esp = tamC * dim;
+    canvas.height = esp;
+    canvas.width = esp;
+    actual = matriz.control;
+	prepareImages();
+	startListener();
+	activeListeners();*/
 }
 
 //Método que dibuja un nodo.
-function drawNode(node){
+function drawNode(node) {
+    let X=node.ejeX, Y=node.ejeY, T=node.tamanyo;
+	let drawLine = (x1, y1, x2, y2) => {ctx.moveTo(x1, y1); ctx.lineTo(x2,y2);}
+	let drawSwitch = new mySwitch([
+		null,
+		() => {drawLine(X, Y, X+T, Y);},
+		() => {drawLine(X+T, Y, X+T, Y+T);},
+		() => {drawLine(X, Y+T, X+T, Y+T);},
+		() => {drawLine(X, Y, X, Y+T);}
+	]);
 	ctx.beginPath();
 	ctx.lineWidth = 1;
 	ctx.strokeStyle = "red";
-	ctx.rect(node.ejeX, node.ejeY, node.tamanyo, node.tamanyo);
+	ctx.rect(X, Y, T, T);
 	ctx.fillStyle = "yellow";
 	ctx.fill();
 	ctx.stroke();
-	
-	for(var i=0; i<node.conexiones.length; i++){
-		ctx.beginPath();
-		switch(node.conexiones[i]){
-			case 1:			
-				ctx.moveTo(node.ejeX,node.ejeY);
-				ctx.lineTo(node.ejeX+node.tamanyo,node.ejeY);
-				break;
-			case 2:
-				ctx.moveTo(node.ejeX+node.tamanyo,node.ejeY);
-				ctx.lineTo(node.ejeX+node.tamanyo,node.ejeY+node.tamanyo);
-				break;
-			case 3:
-				ctx.moveTo(node.ejeX,node.ejeY+node.tamanyo);
-				ctx.lineTo(node.ejeX+node.tamanyo,node.ejeY+node.tamanyo);
-				break;
-			case 4:
-				ctx.moveTo(node.ejeX,node.ejeY);
-				ctx.lineTo(node.ejeX,node.ejeY+node.tamanyo);
-				break;
+	node.conexiones.forEach(
+		(e) => {
+			ctx.beginPath();
+			drawSwitch.getFunction(e)();
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = 'yellow';
+			ctx.stroke();
 		}
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = 'yellow';
-		ctx.stroke();
-	}
-	(node.visitado)?loadImage(node.ejeX, node.ejeY):true;
-	(node.nodoFinal)?loadTrophy(node.ejeX, node.ejeY):true;
+	);
+	(node.visitado)?loadImage(X, Y):true;
+	(node.nodoFinal)?loadTrophy(X, Y):true;
 }
 
 //Método que carga la imagen del trofeo.
 function loadTrophy(x, y){
-	var newX=x+(tamanoCelda*0.25), newY=y+(tamanoCelda*0.25), newT=tamanoCelda-(tamanoCelda*0.5);
-	var base_image = new Image();
-	base_image.src = '../img/Trofeo.png';
-	ctx.drawImage(base_image,newX,newY,newT,newT);
+	var newX=x+(tamC*0.25), newY=y+(tamC*0.25), newT=tamC-(tamC*0.5);
+	ctx.drawImage(trophyImage,newX,newY,newT,newT);
 }
 
 //Método que carga la imagen del tigre.
 function loadImage(x, y){
-	var newX=x+(tamanoCelda*0.25), newY=y+(tamanoCelda*0.25), newT=tamanoCelda-(tamanoCelda*0.5);
-	var base_image = new Image();
-	base_image.src = '../img/Ej.jpg';
-	ctx.drawImage(base_image,newX,newY,newT,newT);
+	var newX=x+(tamC*0.25), newY=y+(tamC*0.25), newT=tamC-(tamC*0.5);
+	ctx.drawImage(tigreImage,newX,newY,newT,newT);
 }
 
 //Método que marca el paso del jugador por el laberinto.
-function mark(x,y,tam,co){
-	var newX=x+(tam*0.25), newY=y+(tam*0.25), newT=tam-(tam*0.5);
+function mark(x1,y1,x2,y2,tam,co){
+	var newX=x1+(tam*0.25), newY=y1+(tam*0.25), newT=tam-(tam*0.5);
 	ctx.beginPath();
 	ctx.rect(newX,newY,newT,newT);
 	ctx.fillStyle = co;
 	ctx.fill();
 	ctx.stroke();
+	loadImage(x2, y2);
 }
 
 //Método que desplaza al jugador por el laberinto.
 function controlCases(e){
-	var next, num, aux, color;
-	switch (e.keyCode) {
-		case 37:
-			next=actual.oeste;
-			num=4;
-			break;
-		case 38:
-			next=actual.norte;
-			num=1;
-			break;
-		case 39:
-			next=actual.este;
-			num=2;
-			break;
-		case 40:
-			next=actual.sur;
-			num=3;
-			break;
-	}
-	for(var i=0; i<actual.conexiones.length; i++){//Un for por eliminar!!!
-		if(actual.conexiones[i]==num){
-			mark(actual.ejeX, actual.ejeY, actual.tamanyo, "white");//Por qué no sale como debería?
-			loadImage(next.ejeX, next.ejeY);
-			(next.nodoFinal) ? alert("Ganaste!!!") : actual=next;
-			break;
+	var next = null, num, check;
+	var controlSwitch = new mySwitch([
+		() => {next=actual.oeste; num=4;},
+		() => {next=actual.norte;num=1;},
+		() => {next=actual.este;num=2;},
+		() => {next=actual.sur;num=3;}
+	]);
+	controlSwitch.getFunction((e.keyCode)-37)();
+	if(next){
+		check = actual.conexiones.some((e) => {
+			if(e==num){
+				mark(actual.ejeX, actual.ejeY, next.ejeX, next.ejeY, actual.tamanyo, "white");
+				return true;
+			}
+			else
+				return false;
+		});
+		
+		if(check){
+			(next.nodoFinal) ? declareWinner() : actual=next;
+		}
+		else{
+			alert("No hay camino.");
 		}
 	}
+}
+
+//Método que resuelve al laberinto.
+function autoControl(){
+	actual = matriz.control;
+	var solucion = reverse(matriz.solucion);
+	
+	let sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
+	
+	function autoMovement(next, solution){
+		var nS = myPop(solution);
+		mark(actual.ejeX, actual.ejeY, next.ejeX, next.ejeY, actual.tamanyo, "grey");
+		actual = next;
+		(next.nodoFinal) ? declareWinner() : sleep(500).then(() => autoMovement(next.go(nS[1]), nS[0]));
+	}
+	var newSolution = myPop(solucion);
+	window.removeEventListener('keydown',controlCases);
+	sleep(500).then(() => autoMovement(actual.go(newSolution[1]), newSolution[0]));
+}
+
+//Método que remueve el listener al terminar la partida.
+function declareWinner(){
+	window.removeEventListener('keydown',controlCases);
+	alert("Ganaste!!!")
 }

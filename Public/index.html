@@ -32,14 +32,24 @@
 			<canvas id="Panel" height="500" width="500">
 			</canvas>
 			<hr>
-			<input id="Dimension" type="text" placeholder="Dimension"value="3">
-			<button id="gen" onclick="getGen();">Generar laberinto</button>
-			<button id="guardar" onclick="postSave();">Guardar partida!</button>
-			<button id="cargar" onclick="getLoad();">Cargar partida!</button>
-			<input id="name" type="text" placeholder="Nombre de partida"></input>
-		</div><center>
+			<table class="control">
+			<th colspan="2">Para generar Laberintos</th>
+			<tr><td>Dimension</td><td><input id="Dimension" type="text" placeholder="Dimension"value="3"></td></tr>
+			<tr><td colspan="2"><button id="gen" onclick="getGen();">Generar laberinto</button></td></tr>
+			</table>
+			<table class="control">
+			<th colspan="2">Persistencia</th>
+			<tr><td>Nombre de la Partida:</td><td><input id="name" type="text" placeholder="Nombre de partida"></input></td></</tr>
+			<tr><td colspan="2"><button id="guardar" onclick="postSave();">Guardar partida!</button>
+			<button id="cargar" onclick="getLoad();">Cargar partida!</button></td></tr>
+			</table>
+			<hr>
+			<center><input id="Solucion" type="button" value="Resolver Laberinto" disabled></center>	
+			<hr>
+			
+		</div>
 		<div id='msg'>
 		<h3>Registro de actividad</h3>
-		</center><div>
+		<div>
 	</body>
 </html>

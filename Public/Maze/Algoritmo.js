@@ -1,3 +1,8 @@
+let myPush = (a, n) => a.concat(n);
+let copyArray = (a) => a.slice(0, a.length);
+let reverse = (a) => a.map((c, i) => a[a.length - (i + 1)]);
+let myPop = (a) => new Array(a.slice(0, a.length-1), a[a.length-1]);
+
 //==================================================
 //===============Método genera matriz===============
 //==================================================
@@ -6,18 +11,18 @@ function generaMatriz(dim,tam,esp){
 	var primero = new Nodo(tam, esp, esp);
 	
 	//Crea las filas.
-	function buildRow(raiz, newO, newS, i, j, n,x,y){
+	function buildRow(raiz,newO,newS,x,y){
 		var node = new Nodo(tam, x+tam, y);
 		node.oeste=newO;
 		newO.este=node;
 		node.sur=newS;
 		newS.norte=node;
-		return (j+1<n) ? buildStructure(raiz,node,newS.este,i,j+1,n,x+tam,y) :
-			(i+1<n) ? buildStructure(raiz,null,raiz.este,i+1,0,n,x+tam,y) : raiz;
+		return ((x+(tam*2))<(dim*tam)) ? buildStructure(raiz,node,newS.este,x+tam,y) :
+			(0 < y) ? buildStructure(raiz,null,raiz.este,x+tam,y) : raiz;
 	}
 	
 	//Inicia las columnas (Base de las filas).
-	function buildColumn(raiz,newS,i,j,n,x,y){
+	function buildColumn(raiz,newS,x,y){
 		var aux = new Nodo(tam,0,y-tam);
 		var node = new Nodo(tam,tam,y-tam);
 		raiz.norte=aux;
@@ -26,24 +31,24 @@ function generaMatriz(dim,tam,esp){
 		aux.este=node;
 		node.sur=newS;
 		newS.norte=node;
-		return (j+2<n) ? buildStructure (aux, node, newS.este, i, j+2, n,tam,y-tam) :
-			(i+1<n) ? buildStructure(aux, null, aux.este, i+1, 0, n,tam,y-tam) : aux;
+		return (0 < (y-tam) || 0 < x) ? buildStructure (aux,node,newS.este,tam,y-tam) : aux;
 	}
 	
 	//Crea la primera fila (Base de todo).
-	function firstRow(raiz,i,j,n,x,y){//Crea la primera fila que es la base de todo.
+	function firstRow(raiz,x,y){//Crea la primera fila que es la base de todo.
 		var node = new Nodo(tam, x-tam, y);
 		node.este=raiz;
 		raiz.oeste=node;
-		return (j+1<n) ? buildStructure(node, null, null, i, j+1, n,x-tam,y) :
-			(i+1<n) ? buildStructure(node, null, node.este, i+1, 0, n,x-tam,y) : node;
+		return (0 < x-tam) ? buildStructure(node,null,null,x-tam,y) : buildStructure(node,null,node.este,x-tam,y);
 	}
-	//Método que define qué sigue.
-	function buildStructure(raiz,newO,newS,i,j,n,x,y){
-		return (newO) ? buildRow(raiz, newO, newS, i, j, n, x, y) :
-			(newS) ? buildColumn(raiz, newS, i, j, n, x, y) : firstRow(raiz, i, j, n, x, y);
+	
+	//Método que define qué sigue.+
+	function buildStructure(raiz,newO,newS,x,y){
+		return (newO) ? buildRow(raiz,newO,newS,x,y) :
+			(newS) ? buildColumn(raiz,newS,x,y) : firstRow(raiz,x,y);
 	}
-	return buildStructure(primero,null,null,0,1,dim,esp,esp);
+
+	return new Matriz(dim, buildStructure(primero,null,null,esp,esp), null);
 }
 
 //==================================================
@@ -51,29 +56,33 @@ function generaMatriz(dim,tam,esp){
 //==================================================
 //Retorna el nodo inicial del laberinto.
 function creaLaberinto(tabla){
-	let getRandom = (min, max) => Math.floor((Math.random() * max) + min);
+	let solucion;
+	let nuevoMayor = (nN, nM) => {solucion=copyArray(nM); return [nN, nM.length];};
 	let opuesto = n => (n<3) ? (n+2) : (n-2);
-	let getEnd = (oldN, newN, oldMax, newMax) => (!oldN) ? [newN, newMax] : (oldMax < newMax) ? [newN, newMax] : [oldN, oldMax];
+	let getRandom = (min, max) => Math.floor((Math.random() * max) + min);
+	let getEnd = (oN, nN, oM, nM) => (!oN) ? nuevoMayor(nN, nM) : (oM < nM.length) ? nuevoMayor(nN, nM) : [oN, oM];
 
 	function deadEnd(node,pila,nodeF,numM){//Hace backtracking.
-		var finalNode = getEnd(nodeF, node, numM, pila.length);
+		var finalNode = getEnd(nodeF, node, numM, pila);
 		var newNodoF = finalNode[0];
-		var newNumMax = finalNode[1];
+		var newPila = myPop(pila);
 		(nodeF)?nodeF.nodoFinal=false:true;
 		newNodoF.nodoFinal=true;
-		return (pila.length==0)?node:findPath(node.go(opuesto(pila.pop())), pila, newNodoF, newNumMax);
+		return (pila.length==0)?node:findPath(node.go(opuesto(newPila[1])), newPila[0], newNodoF, finalNode[1]);
 	}
+	
 	function alleyClear(opc,node,pila,nodeF,numM){//Callejón despejado -> Avanza en el grafo.
 		var num=getRandom(0,opc.length);
-		pila.push(opc[num]);
 		node.connect(opc[num]);
 		node.go(opc[num]).connect(opuesto(opc[num]));
-		return findPath(node.go(opc[num]), pila, nodeF, numM);
+		return findPath(node.go(opc[num]), myPush(pila, opc[num]), nodeF, numM);
 	}
+	
 	function findPath(node,pila,nodeF,numM){//Define un camino según las opciones que posee el nodo.
 		node.visitado=false;
 		var opc = node.where();
 		return (opc.length==0)?deadEnd(node,pila,nodeF,numM):alleyClear(opc,node,pila,nodeF,numM);
 	}
-	return findPath(tabla.control,[],null,0);
+	
+	return new Matriz(tabla.dimension, findPath(tabla.control,[],null,0), solucion);
 }
