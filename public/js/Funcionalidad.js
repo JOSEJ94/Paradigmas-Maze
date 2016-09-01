@@ -36,17 +36,13 @@ function letsDoIt() {
 	
 	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => errorMessage("Error al generar laberinto."));
 	toDo.then(prepareImages()).then(startListener()).then(activeListeners());
-	
-    /*matriz = startMaze(dim, tamC, esp - tamC);
-    matriz.control.visitado = true;
-    actual = matriz.control;*/
 }
 function errorMessage(mjs){
 	alert(mjs);
 	console.log(mjs);
 }
 
-function prepareImages(){//Borrar?
+function prepareImages(){
 	trophyImage = new Image();
 	tigreImage = new Image();
 	trophyImage.src = '../img/Trophy.png';
@@ -95,18 +91,6 @@ function updateView(MatrizJson) {
 	}
 	, () => setMessage("Error al generar laberinto."));
 	toDo.then(prepareImages()).then(startListener()).then(activeListeners());
-	
-	/*
-    matriz = JsonToMaze(MatrizJson);
-    matriz.control.visitado = true;
-    const dim = JSON.parse(MatrizJson)[0];
-    const esp = tamC * dim;
-    canvas.height = esp;
-    canvas.width = esp;
-    actual = matriz.control;
-	prepareImages();
-	startListener();
-	activeListeners();*/
 }
 
 //Método que dibuja un nodo.
