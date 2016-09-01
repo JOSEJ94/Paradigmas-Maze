@@ -39,34 +39,6 @@ class Nodo {
     connect(num) {
         this.conexiones.push(num);
     }
-	static from(plain) {
-        let node = new Nodo(plain.tamanyo, plain.ejeX, plain.ejeY);
-		node.visitado=plain.visitado;
-		node.nodoFinal=plain.nodoFinal;
-		node.conexiones=plain.conexiones;
-		node.norte=plain.norte;
-		node.este=plain.este;
-		node.sur=plain.sur;
-		node.oeste=plain.oeste;
-		node.switchN=plain.switchN;
-        return node;
-    }
-    static to(node) {
-        return {
-            _class: 'Nodo',
-            visitado: node.visitado,
-			nodoFinal: node.nodoFinal,
-			tamanyo: node.tamanyo,
-			ejeX: node.ejeX,
-			ejeY: node.ejeY,
-			conexiones: node.conexiones,
-			norte: node.norte,
-			este: node.este,
-			sur: node.sur,
-			oeste: node.oeste,
-			switchN: node.switchN
-			};
-    }
 }
 
 //==================================================
@@ -77,18 +49,6 @@ class Matriz {
         this.control = c;
 		this.solucion = s;
         this.dimension = d;
-    }
-    static from(plain) {
-        let matriz = new Matriz(plain.dimension, plain.control, plain.solucion);
-        return matriz;
-    }
-    static to(matriz) {
-        return {
-            _class: 'Matriz',
-            control: matriz.control,
-            solucion: matriz.solucion,
-			dimension: matriz.dimension
-        };
     }
 }
 
@@ -102,14 +62,4 @@ class mySwitch {
 	getFunction(n){
 		return this.funciones[n];
 	}
-	static from(plain) {
-        let newSwitch = new mySwitch(plain.funciones);
-        return newSwitch;
-    }
-    static to(newSwitch) {
-        return {
-            _class: 'mySwitch',
-            funciones: newSwitch.funciones
-        };
-    }
 }
