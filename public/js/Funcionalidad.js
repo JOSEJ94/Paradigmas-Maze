@@ -22,6 +22,11 @@ window.onload = () => {
     canvas = document.getElementById("Panel");
     ctx = canvas.getContext("2d");
     tamC = 50;
+	
+	trophyImage = new Image();
+	tigreImage = new Image();
+	trophyImage.src = '../img/Trophy.png';
+	tigreImage.src = '../img/Tiger.png';
 }
 
 //Método que inicializa una partida.
@@ -35,22 +40,11 @@ function letsDoIt() {
     canvas.width = esp;
 	
 	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => errorMessage("Error al generar laberinto."));
-	toDo.then(prepareImages()).then(startListener()).then(activeListeners());
-	
-    /*matriz = startMaze(dim, tamC, esp - tamC);
-    matriz.control.visitado = true;
-    actual = matriz.control;*/
+	toDo.then(startListener()).then(activeListeners());
 }
 function errorMessage(mjs){
 	alert(mjs);
 	console.log(mjs);
-}
-
-function prepareImages(){//Borrar?
-	trophyImage = new Image();
-	tigreImage = new Image();
-	trophyImage.src = '../img/Trophy.png';
-	tigreImage.src = '../img/Tiger.png';
 }
 
 //Método que inicializa un laberinto.
@@ -83,30 +77,17 @@ function activeListeners() {
 //enviar notificacion de actualizar la vista 
 function updateView(MatrizJson) {
 	
-	let toDo = new Promise(() =>
-	{
-    matriz = JsonToMaze(MatrizJson);
-    matriz.control.visitado = true;
-    const dim = JSON.parse(MatrizJson)[0];
-    const esp = tamC * dim;
-    canvas.height = esp;
-    canvas.width = esp;
-    actual = matriz.control;
-	}
-	, () => setMessage("Error al generar laberinto."));
-	toDo.then(prepareImages()).then(startListener()).then(activeListeners());
+	let toDo = new Promise(() => {
+		matriz = JsonToMaze(MatrizJson);
+		matriz.control.visitado = true;
+		const dim = JSON.parse(MatrizJson)[0];
+		const esp = tamC * dim;
+		canvas.height = esp;
+		canvas.width = esp;
+		actual = matriz.control;
+	}, () => setMessage("Error al generar laberinto."));
 	
-	/*
-    matriz = JsonToMaze(MatrizJson);
-    matriz.control.visitado = true;
-    const dim = JSON.parse(MatrizJson)[0];
-    const esp = tamC * dim;
-    canvas.height = esp;
-    canvas.width = esp;
-    actual = matriz.control;
-	prepareImages();
-	startListener();
-	activeListeners();*/
+	toDo.then(startListener()).then(activeListeners());
 }
 
 //Método que dibuja un nodo.
@@ -165,14 +146,15 @@ function mark(x1,y1,x2,y2,tam,co){
 
 //Método que desplaza al jugador por el laberinto.
 function controlCases(e){
-	var next = null, num, check;
+	var next = null, num, boton, check;
 	var controlSwitch = new mySwitch([
 		() => {next=actual.oeste; num=4;},
 		() => {next=actual.norte;num=1;},
 		() => {next=actual.este;num=2;},
 		() => {next=actual.sur;num=3;}
-	]);
-	controlSwitch.getFunction((e.keyCode)-37)();
+	]);	
+	boton = (e.keyCode)-37;
+	(0<=boton && boton<=4) ? controlSwitch.getFunction(boton)() : true;//Decorar luego!!!
 	if(next){
 		check = actual.conexiones.some((e) => {
 			if(e==num){
