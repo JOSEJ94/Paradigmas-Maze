@@ -39,7 +39,7 @@ class Nodo {
     connect(num) {
         this.conexiones.push(num);
     }
-	static from(plain) {
+	/*static from(plain) {
         let node = new Nodo(plain.tamanyo, plain.ejeX, plain.ejeY);
 		node.visitado=plain.visitado;
 		node.nodoFinal=plain.nodoFinal;
@@ -66,7 +66,7 @@ class Nodo {
 			oeste: node.oeste,
 			switchN: node.switchN
 			};
-    }
+    }*/
 }
 
 //==================================================
@@ -78,7 +78,7 @@ class Matriz {
 		this.solucion = s;
         this.dimension = d;
     }
-    static from(plain) {
+    /*static from(plain) {
         let matriz = new Matriz(plain.dimension, plain.control, plain.solucion);
         return matriz;
     }
@@ -89,7 +89,7 @@ class Matriz {
             solucion: matriz.solucion,
 			dimension: matriz.dimension
         };
-    }
+    }*/
 }
 
 //==================================================
