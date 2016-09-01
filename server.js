@@ -77,7 +77,7 @@ router.route('/guardar/:name') //guardar
 // Registro de rutas
 server.use('/', router);
 //Para cargar las imagenes y assets del cliente...
-server.use(express.static("Public"));
+server.use(express.static("public"));
 console.log('Server iniciado en ' + serverPort);
 console.log('Base de datos disponible en mongodb://' + dbAddress + '/maze');
 server.listen(serverPort);
