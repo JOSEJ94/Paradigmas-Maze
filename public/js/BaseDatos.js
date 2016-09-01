@@ -1,4 +1,5 @@
-﻿function revive(k,v){//Define el tipo de objeto que se recupera.
+﻿
+function revive(k,v){//Define el tipo de objeto que se recupera.
 	if (v instanceof Object && v._class == 'Matriz')
 		return Matriz.from(v);
 	if (v instanceof Object && v._class == 'Nodo')
