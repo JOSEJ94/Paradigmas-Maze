@@ -1,6 +1,12 @@
 //conexiones ajax medio controller..
 function getGen() {
     let dims = document.getElementById("Dimension").value;
+	/*let worker = new Worker('./worker.js');
+	worker.addEventListener('message', function(e) {
+	console.log('Worker said: ', e.data);
+}, false);
+	worker.postMessage("go");
+	*/
     fetch("/generar/" + dims, {
             method: "GET"
         }) //hace peticion por ajax, pide generar laberinto al server

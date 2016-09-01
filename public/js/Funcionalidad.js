@@ -22,24 +22,20 @@ window.onload = () => {
     canvas = document.getElementById("Panel");
     ctx = canvas.getContext("2d");
     tamC = 50;
+	prepareImages();
 }
 
-//Método que inicializa una partida.
 function letsDoIt() {
     //Consigo los datos necesarios.
     const dim = parseInt(document.getElementById("Dimension").value);
     const esp = tamC * dim;
-
+	
     //Edito las letiables necesarias con los valores adecuados.
     canvas.height = esp;
     canvas.width = esp;
-	
 	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => errorMessage("Error al generar laberinto."));
-	toDo.then(prepareImages()).then(startListener()).then(activeListeners());
+	toDo.then(startListener()).then(activeListeners());
 	
-    /*matriz = startMaze(dim, tamC, esp - tamC);
-    matriz.control.visitado = true;
-    actual = matriz.control;*/
 }
 function errorMessage(mjs){
 	alert(mjs);
@@ -94,19 +90,7 @@ function updateView(MatrizJson) {
     actual = matriz.control;
 	}
 	, () => setMessage("Error al generar laberinto."));
-	toDo.then(prepareImages()).then(startListener()).then(activeListeners());
-	
-	/*
-    matriz = JsonToMaze(MatrizJson);
-    matriz.control.visitado = true;
-    const dim = JSON.parse(MatrizJson)[0];
-    const esp = tamC * dim;
-    canvas.height = esp;
-    canvas.width = esp;
-    actual = matriz.control;
-	prepareImages();
-	startListener();
-	activeListeners();*/
+	toDo.then(startListener()).then(activeListeners());
 }
 
 //Método que dibuja un nodo.
