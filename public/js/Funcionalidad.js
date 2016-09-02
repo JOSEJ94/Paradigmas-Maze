@@ -22,15 +22,7 @@ window.onload = () => {
     canvas = document.getElementById("Panel");
     ctx = canvas.getContext("2d");
     tamC = 50;
-<<<<<<< HEAD
 	prepareImages();
-=======
-	
-	trophyImage = new Image();
-	tigreImage = new Image();
-	trophyImage.src = '../img/Trophy.png';
-	tigreImage.src = '../img/Tiger.png';
->>>>>>> refs/remotes/origin/pr/4
 }
 
 function letsDoIt() {
@@ -41,14 +33,8 @@ function letsDoIt() {
     //Edito las letiables necesarias con los valores adecuados.
     canvas.height = esp;
     canvas.width = esp;
-<<<<<<< HEAD
-	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => errorMessage("Error al generar laberinto."));
+	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => setMessage("Error al generar laberinto."));
 	toDo.then(startListener()).then(activeListeners());
-	
-}
-function errorMessage(mjs){
-	alert(mjs);
-	console.log(mjs);
 }
 
 function prepareImages(){//Borrar?
@@ -56,11 +42,6 @@ function prepareImages(){//Borrar?
 	tigreImage = new Image();
 	trophyImage.src = '../img/Trophy.png';
 	tigreImage.src = '../img/Tiger.png';
-=======
-	
-	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => setMessage("Error al generar laberinto."));
-	toDo.then(startListener()).then(activeListeners());
->>>>>>> refs/remotes/origin/pr/4
 }
 
 //Método que inicializa un laberinto.
@@ -93,19 +74,6 @@ function activeListeners() {
 //enviar notificacion de actualizar la vista 
 function updateView(MatrizJson) {
 	
-<<<<<<< HEAD
-	let toDo = new Promise(() =>
-	{
-    matriz = JsonToMaze(MatrizJson);
-    matriz.control.visitado = true;
-    const dim = JSON.parse(MatrizJson)[0];
-    const esp = tamC * dim;
-    canvas.height = esp;
-    canvas.width = esp;
-    actual = matriz.control;
-	}
-	, () => setMessage("Error al generar laberinto."));
-=======
 	let toDo = new Promise(() => {
 		matriz = JsonToMaze(MatrizJson);
 		matriz.control.visitado = true;
@@ -115,8 +83,6 @@ function updateView(MatrizJson) {
 		canvas.width = esp;
 		actual = matriz.control;
 	}, () => setMessage("Error al generar laberinto."));
-	
->>>>>>> refs/remotes/origin/pr/4
 	toDo.then(startListener()).then(activeListeners());
 }
 
