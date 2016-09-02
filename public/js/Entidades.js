@@ -21,23 +21,19 @@ class Nodo {
 			() => this.oeste
 		]);
     }
-    where() {//UN PUSH!!!
-        let opc = [];
-        if (this.norte)
-            if (this.norte.visitado) opc.push(1);
-        if (this.este)
-            if (this.este.visitado) opc.push(2);
-        if (this.sur)
-            if (this.sur.visitado) opc.push(3);
-        if (this.oeste)
-            if (this.oeste.visitado) opc.push(4);
-        return opc;
+    where() {
+        let opc1 = [], opc2, opc3, opc4, opc5;
+        (this.norte) ? (this.norte.visitado) ? opc2 = myPush(1, opc1) : opc2 = opc1 : opc2 = opc1;
+		(this.este ) ? (this.este.visitado ) ? opc3 = myPush(2, opc2) : opc3 = opc2 : opc3 = opc2;
+		(this.sur  ) ? (this.sur.visitado  ) ? opc4 = myPush(3, opc3) : opc4 = opc3 : opc4 = opc3;
+		(this.oeste) ? (this.oeste.visitado) ? opc5 = myPush(4, opc4) : opc5 = opc4 : opc5 = opc4;
+        return opc5;
     }
     go(n) {
 		return this.switchN.getFunction(n)();
     }
     connect(num) {
-        this.conexiones.push(num);
+        this.conexiones.concat(num);
     }
 }
 

@@ -22,7 +22,15 @@ window.onload = () => {
     canvas = document.getElementById("Panel");
     ctx = canvas.getContext("2d");
     tamC = 50;
+<<<<<<< HEAD
 	prepareImages();
+=======
+	
+	trophyImage = new Image();
+	tigreImage = new Image();
+	trophyImage.src = '../img/Trophy.png';
+	tigreImage.src = '../img/Tiger.png';
+>>>>>>> refs/remotes/origin/pr/4
 }
 
 function letsDoIt() {
@@ -33,6 +41,7 @@ function letsDoIt() {
     //Edito las letiables necesarias con los valores adecuados.
     canvas.height = esp;
     canvas.width = esp;
+<<<<<<< HEAD
 	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => errorMessage("Error al generar laberinto."));
 	toDo.then(startListener()).then(activeListeners());
 	
@@ -47,6 +56,11 @@ function prepareImages(){//Borrar?
 	tigreImage = new Image();
 	trophyImage.src = '../img/Trophy.png';
 	tigreImage.src = '../img/Tiger.png';
+=======
+	
+	let toDo = new Promise(() => startMaze(dim, tamC, esp-tamC), () => setMessage("Error al generar laberinto."));
+	toDo.then(startListener()).then(activeListeners());
+>>>>>>> refs/remotes/origin/pr/4
 }
 
 //Método que inicializa un laberinto.
@@ -79,6 +93,7 @@ function activeListeners() {
 //enviar notificacion de actualizar la vista 
 function updateView(MatrizJson) {
 	
+<<<<<<< HEAD
 	let toDo = new Promise(() =>
 	{
     matriz = JsonToMaze(MatrizJson);
@@ -90,6 +105,18 @@ function updateView(MatrizJson) {
     actual = matriz.control;
 	}
 	, () => setMessage("Error al generar laberinto."));
+=======
+	let toDo = new Promise(() => {
+		matriz = JsonToMaze(MatrizJson);
+		matriz.control.visitado = true;
+		const dim = JSON.parse(MatrizJson)[0];
+		const esp = tamC * dim;
+		canvas.height = esp;
+		canvas.width = esp;
+		actual = matriz.control;
+	}, () => setMessage("Error al generar laberinto."));
+	
+>>>>>>> refs/remotes/origin/pr/4
 	toDo.then(startListener()).then(activeListeners());
 }
 
@@ -126,19 +153,19 @@ function drawNode(node) {
 
 //Método que carga la imagen del trofeo.
 function loadTrophy(x, y){
-	var newX=x+(tamC*0.25), newY=y+(tamC*0.25), newT=tamC-(tamC*0.5);
+	let newX=x+(tamC*0.25), newY=y+(tamC*0.25), newT=tamC-(tamC*0.5);
 	ctx.drawImage(trophyImage,newX,newY,newT,newT);
 }
 
 //Método que carga la imagen del tigre.
 function loadImage(x, y){
-	var newX=x+(tamC*0.25), newY=y+(tamC*0.25), newT=tamC-(tamC*0.5);
+	let newX=x+(tamC*0.25), newY=y+(tamC*0.25), newT=tamC-(tamC*0.5);
 	ctx.drawImage(tigreImage,newX,newY,newT,newT);
 }
 
 //Método que marca el paso del jugador por el laberinto.
 function mark(x1,y1,x2,y2,tam,co){
-	var newX=x1+(tam*0.25), newY=y1+(tam*0.25), newT=tam-(tam*0.5);
+	let newX=x1+(tam*0.25), newY=y1+(tam*0.25), newT=tam-(tam*0.5);
 	ctx.beginPath();
 	ctx.rect(newX,newY,newT,newT);
 	ctx.fillStyle = co;
@@ -149,14 +176,15 @@ function mark(x1,y1,x2,y2,tam,co){
 
 //Método que desplaza al jugador por el laberinto.
 function controlCases(e){
-	var next = null, num, check;
-	var controlSwitch = new mySwitch([
+	let next = null, num, boton, check;
+	let controlSwitch = new mySwitch([
 		() => {next=actual.oeste; num=4;},
 		() => {next=actual.norte;num=1;},
 		() => {next=actual.este;num=2;},
 		() => {next=actual.sur;num=3;}
-	]);
-	controlSwitch.getFunction((e.keyCode)-37)();
+	]);	
+	boton = (e.keyCode)-37;
+	(0<=boton && boton<=4) ? controlSwitch.getFunction(boton)() : true;//Decorar luego!!!
 	if(next){
 		check = actual.conexiones.some((e) => {
 			if(e==num){
@@ -179,17 +207,17 @@ function controlCases(e){
 //Método que resuelve al laberinto.
 function autoControl(){
 	actual = matriz.control;
-	var solucion = reverse(matriz.solucion);
+	let solucion = reverse(matriz.solucion);
 	
 	let sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 	
 	function autoMovement(next, solution){
-		var nS = myPop(solution);
+		let nS = myPop(solution);
 		mark(actual.ejeX, actual.ejeY, next.ejeX, next.ejeY, actual.tamanyo, "grey");
 		actual = next;
 		(next.nodoFinal) ? declareWinner() : sleep(500).then(() => autoMovement(next.go(nS[1]), nS[0]));
 	}
-	var newSolution = myPop(solucion);
+	let newSolution = myPop(solucion);
 	window.removeEventListener('keydown',controlCases);
 	sleep(500).then(() => autoMovement(actual.go(newSolution[1]), newSolution[0]));
 }
