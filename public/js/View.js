@@ -8,6 +8,8 @@ class View{
 		this.trophyImage.src = '../img/Trophy.png';
 		this.tigreImage =new Image();
 		this.tigreImage.src = '../img/Tiger.png';
+		this.fail = new Audio('../Audio/fail.mp3');
+		this.win = new Audio('../Audio/gol.mp3');
 		this.msg = '';
 	}
 	
@@ -98,9 +100,8 @@ class View{
 	document.getElementById("Solucion").disabled = solucion;
 	}
 	declareWinner(){
-
 	this.setMessage('Felicidades has ganado');
-	//agregar sonido de victoria aqui
+	vista.win.play();
 	}
 }
 

@@ -92,3 +92,6 @@ function JsonToMaze(code){
 		fromJSON[1]									//Camino que lleva directamente al final del laberinto.
 	);
 }
+
+	
+	

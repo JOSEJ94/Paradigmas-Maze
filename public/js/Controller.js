@@ -1,9 +1,21 @@
+let worker = new Worker("js/Worker.js");
+
 function getGen() {
-    let dims = parseInt(document.getElementById("Dimension").value);
+    let dimM = parseInt(document.getElementById("Dimension").value);
 	vista.setMessage("Generando Laberinto");
-	modelo.startMaze(dims,vista.tamC,(vista.tamC * dims)-vista.tamC);
+	modelo.startMaze(dimM,vista.tamC,(vista.tamC * dimM)-vista.tamC);
 	vista.activate(false);
-    /*fetch("/generar/" + dims, {
+    
+	/*
+	worker.addEventListener("message", (e) => {
+		modelo.setModel(JsonToMaze(e.data));
+		vista.activate(false);
+	});
+
+	worker.postMessage(dimM+"-"+vista.tamC+"="+((vista.tamC * dimM)-vista.tamC));	
+	*/
+	
+	/*fetch("/generar/" + dimM, {
             method: "GET"
         }) //hace peticion por ajax, pide generar laberinto al server
         .then((response) => {
@@ -15,7 +27,7 @@ function getGen() {
         }) //asigna el div asociado con el resultado de la solicitud (para debugging)
         .catch(err => {
             vista.setMessage("No hay conexion con el servidor, generado localmente");
-            modelo.startMaze(dims,vista.tamC,(vista.tamC * dims)-vista.tamC);
+            modelo.startMaze(dimM,vista.tamC,(vista.tamC * dimM)-vista.tamC);
         }); //situacion en caso de no conexion
 	*/
 }
@@ -89,23 +101,18 @@ function controlCases(e){
 	(0<=boton && boton<=4) ? controlSwitch.getFunction(boton)() : true;//Decorar luego!!!
 	if(next&&!modelo.winner){
 		check = modelo.actual.conexiones.some((e) => {
-			if(e==num){
-				vista.mark(modelo.actual.ejeX, modelo.actual.ejeY, next.ejeX, next.ejeY, modelo.actual.tamanyo, "white");
-				return true;
-			}
-			else
-				return false;
-		});
-		
-		if(check){
-			(next.nodoFinal) ? (modelo.winner=true,vista.declareWinner()) : modelo.actual=next;
-		}
-		else{
-			//sonido de choque contra pared...
-			alert("No hay camino.");
-		}
+			return (e==num)?
+			(vista.mark(modelo.actual.ejeX, modelo.actual.ejeY, next.ejeX, next.ejeY, modelo.actual.tamanyo, "white"),true)
+			:false;
+			});	
+		(check)?(
+			(next.nodoFinal) ? 
+				(vista.activate(true),modelo.winner=true,vista.declareWinner()) 
+				: modelo.actual=next)
+			:vista.fail.play();
 	}
 }
+
 
 function autoControl(){
 	vista.deactivate();

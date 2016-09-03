@@ -4,7 +4,7 @@ class Model{
 	this.actual= undefined;
 	this.winner=true;
 	}
-
+	
 	startMaze(dim, tam_1, tam_2) {
 		this.matriz = creaLaberinto(generaMatriz(dim, tam_1, tam_2));
 		this.actual = this.matriz.control;
