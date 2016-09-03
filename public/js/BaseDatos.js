@@ -44,7 +44,7 @@ function mazeToJson(matriz){
 	function toCode(a, raiz, node, i, j, n){
 		let aN, aR;
 		aR = (j==1) ? raiz.sur : raiz;
-		aN=node.este;		
+		aN=node.este;	
 		let a2 = myPush(a, limpiaConexiones(node));
 		return (j<n) ? toCode(a2, aR, aN, i, j+1, n) :
 			   (i<n) ? toCode(a2, aR, aR, i+1, 1, n) : JSON.stringify(a2);
@@ -66,7 +66,7 @@ function JsonToMaze(code){
 	//Conecta entre nodos los puntos este y oeste (Simplifica el reconectar).
 	function simplify(nA, oA, raiz, node, i, n){
 		node.este = oA[i];
-		oA[i].oeste = node;
+		oA[i].oeste = node;	
 		return ((i+1)%n==0) ? addNode(nA, oA, raiz, i, n) : simplify(nA, oA, raiz, oA[i], i+1, n);
 	}
 	

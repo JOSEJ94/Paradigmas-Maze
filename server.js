@@ -54,6 +54,7 @@ router.route('/cargar/:name') //cargar
         query.exec().catch(err => {
             console.log('error');
             res.sendStatus(400);
+			res.end();
         }).then(result => res.json(result.maze)).then(obj => console.log('Encontrada la partida y enviada al solicitante'));
     });
 
