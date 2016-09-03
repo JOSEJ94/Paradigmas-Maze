@@ -3,9 +3,9 @@ let worker = new Worker("js/Worker.js");
 function getGen() {
     let dimM = parseInt(document.getElementById("Dimension").value);
 	vista.setMessage("Generando Laberinto");
-	modelo.startMaze(dimM,vista.tamC,(vista.tamC * dimM)-vista.tamC);
+	/*modelo.startMaze(dimM,vista.tamC,(vista.tamC * dimM)-vista.tamC);
 	vista.activate(false);
-    
+    */
 	/*
 	worker.addEventListener("message", (e) => {
 		modelo.setModel(JsonToMaze(e.data));
@@ -13,9 +13,8 @@ function getGen() {
 	});
 
 	worker.postMessage(dimM+"-"+vista.tamC+"="+((vista.tamC * dimM)-vista.tamC));	
-	*/
-	
-	/*fetch("/generar/" + dimM, {
+	*/	
+	fetch("/generar/" + dimM, {
             method: "GET"
         }) //hace peticion por ajax, pide generar laberinto al server
         .then((response) => {
@@ -29,7 +28,7 @@ function getGen() {
             vista.setMessage("No hay conexion con el servidor, generado localmente");
             modelo.startMaze(dimM,vista.tamC,(vista.tamC * dimM)-vista.tamC);
         }); //situacion en caso de no conexion
-	*/
+		vista.activate(false);
 }
 
 function postSave() { //hace peticion de guardado de una partida  del laberinto 
@@ -113,7 +112,6 @@ function controlCases(e){
 	}
 }
 
-
 function autoControl(){
 	vista.deactivate();
 	modelo.actual = modelo.matriz.control;
@@ -139,3 +137,4 @@ window.onload = () => {
 	document.getElementById("Solucion").addEventListener('click',autoControl);
 	window.addEventListener('keydown', controlCases);
 }
+

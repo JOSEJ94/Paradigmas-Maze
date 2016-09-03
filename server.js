@@ -3,15 +3,15 @@ let express = require('express');
 let fs = require("fs");
 let mongoose = require('mongoose');
 let bodyParser = require('body-parser');
-
 let generator = require('./server/Generador.js');
-let converter = require('./server/Converter.js');
 
+//parametros de configuración del server y la base de datos.
 const serverPort = 8081;
 const dbAddress = 'localhost';
+const db = 'maze';
 
 //conectarse a BD
-mongoose.connect('mongodb://' + dbAddress + '/maze');
+mongoose.connect('mongodb://' + dbAddress + '/'+db);
 //configurar promesas de Mongoose para que sean igual que las nativas
 mongoose.Promise = global.Promise;
 module.exports = mongoose;
@@ -24,6 +24,7 @@ let server = express();
 //crear Router
 let router = express.Router();
 
+//para request que contengan body...
 server.use(bodyParser.urlencoded({
     extended: false
 }))
@@ -42,7 +43,8 @@ router.route('/') //cargar pagina
 router.route('/generar/:dim') //generar el laberinto
     .get((req, res) => {
         console.log('Generar laberinto de ' + req.params.dim + 'x' + req.params.dim);
-        res.json(converter.mazeToJson(generator.generate(req.params.dim)));
+        res.json(generator.generate(req.params.dim));
+		console.log('Generado con exito');
     });
 
 router.route('/cargar/:name') //cargar

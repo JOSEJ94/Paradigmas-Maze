@@ -1,3 +1,4 @@
+let utils= require('./utilidades.js');
 //==================================================
 //===================Objeto Nodo.===================
 //==================================================
@@ -21,52 +22,20 @@ class Nodo {
 			() => this.oeste
 		]);
     }
-    where() {//UN PUSH!!!
-        let opc = [];
-        if (this.norte)
-            if (this.norte.visitado) opc.push(1);
-        if (this.este)
-            if (this.este.visitado) opc.push(2);
-        if (this.sur)
-            if (this.sur.visitado) opc.push(3);
-        if (this.oeste)
-            if (this.oeste.visitado) opc.push(4);
-        return opc;
+    where() {
+        let opc1 = [], opc2, opc3, opc4, opc5;
+		(this.norte) ? (this.norte.visitado) ? opc2 = utils.myPush(opc1, 1) : opc2 = opc1 : opc2 = opc1;
+		(this.este ) ? (this.este.visitado ) ? opc3 = utils.myPush(opc2, 2) : opc3 = opc2 : opc3 = opc2;
+		(this.sur  ) ? (this.sur.visitado  ) ? opc4 = utils.myPush(opc3, 3) : opc4 = opc3 : opc4 = opc3;
+		(this.oeste) ? (this.oeste.visitado) ? opc5 = utils.myPush(opc4, 4) : opc5 = opc4 : opc5 = opc4;
+        return opc5;
     }
     go(n) {
 		return this.switchN.getFunction(n)();
     }
     connect(num) {
-        this.conexiones.push(num);
+        this.conexiones.push(num);//El último push por apear.
     }
-	/*static from(plain) {
-        let node = new Nodo(plain.tamanyo, plain.ejeX, plain.ejeY);
-		node.visitado=plain.visitado;
-		node.nodoFinal=plain.nodoFinal;
-		node.conexiones=plain.conexiones;
-		node.norte=plain.norte;
-		node.este=plain.este;
-		node.sur=plain.sur;
-		node.oeste=plain.oeste;
-		node.switchN=plain.switchN;
-        return node;
-    }
-    static to(node) {
-        return {
-            _class: 'Nodo',
-            visitado: node.visitado,
-			nodoFinal: node.nodoFinal,
-			tamanyo: node.tamanyo,
-			ejeX: node.ejeX,
-			ejeY: node.ejeY,
-			conexiones: node.conexiones,
-			norte: node.norte,
-			este: node.este,
-			sur: node.sur,
-			oeste: node.oeste,
-			switchN: node.switchN
-			};
-    }*/
 }
 
 //==================================================
@@ -78,18 +47,6 @@ class Matriz {
 		this.solucion = s;
         this.dimension = d;
     }
-    /*static from(plain) {
-        let matriz = new Matriz(plain.dimension, plain.control, plain.solucion);
-        return matriz;
-    }
-    static to(matriz) {
-        return {
-            _class: 'Matriz',
-            control: matriz.control,
-            solucion: matriz.solucion,
-			dimension: matriz.dimension
-        };
-    }*/
 }
 
 //==================================================
@@ -102,20 +59,10 @@ class mySwitch {
 	getFunction(n){
 		return this.funciones[n];
 	}
-	static from(plain) {
-        let newSwitch = new mySwitch(plain.funciones);
-        return newSwitch;
-    }
-    static to(newSwitch) {
-        return {
-            _class: 'mySwitch',
-            funciones: newSwitch.funciones
-        };
-    }
 }
 
 module.exports = {
-	Matriz : Matriz,
 	Nodo : Nodo,
+	Matriz : Matriz,
 	mySwitch : mySwitch
-}
+}	
