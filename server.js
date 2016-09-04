@@ -72,7 +72,8 @@ router.route('/guardar/:name') //guardar
             res.write("Laberinto " + req.params.name + " guardado exitosamente!");
             res.end();
         }).catch(err => {
-            console.log('Post ' + err);
+            console.log('Error al guardar partida... Llave duplicada');
+			res.write("Laberinto " + req.params.name + " no se pudo guardar porque existe otra partida con ese nombre");
             res.end();
         });
     });

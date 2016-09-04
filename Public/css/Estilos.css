@@ -1,37 +1,24 @@
-
-
-td {
-	text-align: center;
+.table-striped {
+	background: white;
 }
 
-span{
-	font-size: 25px;	
-	font-weight: bold;
+#msg {
+	background: red;
+    background: -webkit-linear-gradient(#cc0000, red);
+    background: -o-linear-gradient(#cc0000, red);
+    background: -moz-linear-gradient(#cc0000, red);
+    background: linear-gradient(#cc0000, red);
+	color: white;
 }
 
-h1{
-	color: red;
-	display: block;
-    font-size: 50px;
-    margin-left: 0;
-    margin-right: 0;
-    font-weight: bold;
+body {
+	background: #e6e6e6
 }
 
-.Centrado{
-	text-align: center;
+.page-header {
+	background: yellow;
+    background: -webkit-linear-gradient(yellow, #ff9900);
+    background: -o-linear-gradient(yellow, #ff9900);
+    background: -moz-linear-gradient(yellow, #ff9900);
+    background: linear-gradient(yellow, #ff9900);
 }
-
-.control
-{
-	display: inline-block;
-	background-color: white;
-    border-style: ridge;
-    border-radius: 16px;
-    padding: 10px 10px 10px 10px;
-    text-align: center;
-    vertical-align: middle;
-    width: 300px;
-	height: 100px
-}
-
